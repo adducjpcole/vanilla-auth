@@ -7,13 +7,16 @@
   <title>Signup</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script type="module">
+    import { generateTabName, removeRecentAuthTabIfCurrent } from './util.js';
     import * as auth from './auth.js';
 
-    if (auth.getCurrentUser()) {
-      document.location.href = 'home.html';
-    }
+    if (!window.name)
+      window.name = generateTabName();
 
-    window.name = "active";
+    window.addEventListener('beforeunload', removeRecentAuthTabIfCurrent);
+
+    if (auth.getCurrentUser())
+      document.location.href = 'home.html';
   </script>
 </head>
 

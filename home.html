@@ -12,16 +12,21 @@
     }
   </style>
   <script type="module">
+    import { generateTabName, removeRecentAuthTabIfCurrent } from './util.js';
     import * as auth from './auth.js';
 
-    if (!auth.getCurrentUser() || !window.name) {
+    if (!auth.getCurrentUser() || (!window.name && localStorage.getItem('recentAuthTab') === null)) {
       auth.logout()
       document.location.href = 'login.html';
     } else {
+      if (!window.name)
+        window.name = generateTabName();
+
+      localStorage.setItem('recentAuthTab', window.name);
+      window.addEventListener('beforeunload', removeRecentAuthTabIfCurrent);
+
       document.documentElement.style.visibility = 'visible';
     }
-
-    window.name = "active";
   </script>
 </head>
 
