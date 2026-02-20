@@ -14,11 +14,14 @@
   <script type="module">
     import * as auth from './auth.js';
 
-    if (!auth.getCurrentUser()) {
+    if (!auth.getCurrentUser() || !window.name) {
+      auth.logout()
       document.location.href = 'login.html';
     } else {
       document.documentElement.style.visibility = 'visible';
     }
+
+    window.name = "active";
   </script>
 </head>
 
