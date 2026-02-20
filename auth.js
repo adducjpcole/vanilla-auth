@@ -1,31 +1,29 @@
-
 /**
  * @typedef {{email: string, password: string, username: string}} User
  */
 
 /** @type {User[]} */
-let users = JSON.parse(localStorage.getItem("users") || "[]");
-/** @type {User|null} */
-let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+const users = JSON.parse(localStorage.getItem('users') || '[]');
 
 /**
  * Adds a user into users table
- * 
+ *
  * @param {string} username
  * @param {string} email
  * @param {string} password
+ * @returns True if successful and false if there's someone has the same email
  */
 export function signup(username, email, password) {
-    /** @type {User} */
-    const user = {
-        username,
-        email,
-        password
-    };
+  const same = users.find((value) => value.email === email);
+  if (same !== undefined) return false;
 
-    users.push(user);
-
-    localStorage.setItem("users", JSON.stringify(users));
+  users.push({
+    username,
+    email,
+    password,
+  });
+  localStorage.setItem('users', JSON.stringify(users));
+  return true;
 }
 
 /**
@@ -35,36 +33,33 @@ export function signup(username, email, password) {
  * @param {string} password
  */
 export function login(email, password) {
-    const user = users.find((value) => value.email === email && value.password === password);
+  const user = users.find(
+    (value) => value.email === email && value.password === password,
+  );
 
-    if (user === undefined)
-        return null;
+  if (user === undefined) return null;
 
-    // document.location.href = "home.html";
-    return structuredClone(user);
+  localStorage.setItem('currentUser', JSON.stringify(user));
+  document.location.href = 'home.html';
+  return structuredClone(user);
 }
 
 /**
- * Returns authenticated user
+ * Returns current session's user
  *
  * @returns {User|null}
  */
 export function getCurrentUser() {
-    return JSON.parse(localStorage.getItem("currentUser"));
+  return JSON.parse(localStorage.getItem('currentUser'));
 }
 
 /**
- * Deletes currentUser
- * 
- * @returns If currentUser existed
+ * Deletes current user and returns `true` if successful
  */
 export function logout() {
-    if (currentUser) return false;
+  let currentUser = getCurrentUser();
+  if (currentUser === null) return false;
 
-    currentUser = null;
-    localStorage.removeItem("currentUser");
-
-    return true;
+  localStorage.removeItem('currentUser');
+  return true;
 }
-
-

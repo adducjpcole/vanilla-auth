@@ -2,13 +2,58 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=`, initial-scale=1.0">
-    <title>Home</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=`, initial-scale=1.0">
+  <title>Home</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    html {
+      visibility: hidden;
+    }
+  </style>
+  <script type="module">
+    import * as auth from './auth.js';
+
+    if (!auth.getCurrentUser()) {
+      document.location.href = 'login.html';
+    } else {
+      document.documentElement.style.visibility = 'visible';
+    }
+  </script>
 </head>
 
-<body data-requires-login="true">
+<body class="flex flex-col min-h-screen bg-neutral-100">
+  <header class="flex justify-between items-center py-2 px-4">
+    <div>
+      <h1 class="text-2xl">
+        Dashboard
+      </h1>
+    </div>
 
+    <div class="relative">
+      <button class="flex items-center gap-2 cursor-pointer" id="dropdown-btn">
+        <div class="text-right">
+          <p class="$username"></p>
+          <p class="$email" class="text-sm"></p>
+        </div>
+        <img src="circle-user-round.png" alt="Your profile picture" class="size-10">
+      </button>
+
+      <div id="dropdown-menu" class="hidden absolute right-0 w-32 mt-2 bg-white shadow-lg rounded p-4">
+        <button id="redirect-to-login" type="button"
+          class="bg-rose-500 py-2 px-4 rounded text-white cursor-pointer hover:scale-105 hover:shadow-2xl transition-all w-full">
+          Log out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 flex flex-col items-center justify-center">
+    <p class="italic tracking-widest">Hello,</p>
+    <p class="text-2xl $username"></p>
+  </main>
+
+  <script type="module" src="home.js"></script>
 </body>
 
 </html>
