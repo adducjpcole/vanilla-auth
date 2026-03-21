@@ -1,5 +1,5 @@
+import './product-display.js';
 import * as auth from '@/auth.js';
-import * as productDisplay from './product-display.js';
 
 {
   const dropdownBtn = document.getElementById('dropdown-btn');
@@ -20,18 +20,16 @@ if (auth.getCurrentUser()) {
     location.reload();
   });
 
-  {
-    const usernameDisplays = document.getElementsByClassName('$username');
-    for (let i = 0; i < usernameDisplays.length; i++) {
-      const elem = usernameDisplays.item(i);
-      elem.textContent = auth.getCurrentUser().username;
-    }
+  const usernameDisplays = document.getElementsByClassName('$username');
+  for (let i = 0; i < usernameDisplays.length; i++) {
+    const elem = usernameDisplays.item(i);
+    elem.textContent = auth.getCurrentUser().username;
+  }
 
-    const emailDisplays = document.getElementsByClassName('$email');
-    for (let i = 0; i < emailDisplays.length; i++) {
-      const elem = emailDisplays.item(i);
-      elem.textContent = auth.getCurrentUser().email;
-    }
+  const emailDisplays = document.getElementsByClassName('$email');
+  for (let i = 0; i < emailDisplays.length; i++) {
+    const elem = emailDisplays.item(i);
+    elem.textContent = auth.getCurrentUser().email;
   }
 } else {
   // Else, if user is unauthenticated:

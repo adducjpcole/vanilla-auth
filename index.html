@@ -86,11 +86,11 @@
 
     <form class="w-full lg:w-1/4">
       <p class="font-semibold">Filter by price</p>
-      <dual-range-input id="price-range" min="0" max="1000" step="10" name-min="min-price" value-min="100"
-        name-max="max-price" value-max="750"></dual-range-input>
+      <dual-range-input id="price-range" min="0" max="1000" step="10" name-min="min-price" value-min="0"
+        name-max="max-price" value-max="1000"></dual-range-input>
       <div class="flex justify-between">
         <p>$0</p>
-        <p>$1000</p>
+        <p class="$max-price">$1000</p>
       </div>
 
       <button

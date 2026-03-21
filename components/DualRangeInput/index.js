@@ -27,6 +27,15 @@ export default class DualRangeInput extends HTMLElement {
 
     this.updateFloor = () => this.#update('floor');
     this.updateCeil = () => this.#update('ceil');
+
+    this.onChange = () => {
+      this.dispatchEvent(
+        new Event('change', {
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    };
   }
 
   async connectedCallback() {
@@ -58,6 +67,9 @@ export default class DualRangeInput extends HTMLElement {
       passive: true,
     });
 
+    this.$min.addEventListener('change', this.onChange);
+    this.$max.addEventListener('change', this.onChange);
+
     this.#isBound = true;
   }
 
@@ -75,6 +87,9 @@ export default class DualRangeInput extends HTMLElement {
 
     this.$min.removeEventListener('touchstart', this.updateCeil);
     this.$max.removeEventListener('touchstart', this.updateFloor);
+
+    this.$min.removeEventListener('change', this.onChange);
+    this.$max.removeEventListener('change', this.onChange);
 
     this.#isBound = false;
   }
