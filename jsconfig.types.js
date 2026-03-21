@@ -25,5 +25,13 @@
  */
 
 /**
+ * @typedef {Object} CartItem
+ * @property {number} id
+ * @property {string} name
+ * @property {number} price
+ * @property {number} quantity
+ */
+
+/**
  * @typedef {CustomEvent<{ id: number }>} AddToCartEvent
  */

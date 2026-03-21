@@ -1,4 +1,13 @@
+import showToast from '@/showToast.js';
 import DualRangeInput from './components/DualRangeInput/index.js';
+import ProductDisplay from './components/ProductDisplay/index.js';
+import {
+  addToCart,
+  findItemIndex,
+  getItem,
+  setItemQuantity,
+  setItemQuantityByIndex,
+} from '@/Cart.js';
 
 /** @type {HTMLSelectElement} */
 const $category = document.querySelector('#category');
@@ -28,12 +37,30 @@ const $productsDisplay = document.querySelector('#product-displays');
 $productsDisplay.addEventListener(
   'addtocart',
   async (/** @type {AddToCartEvent} */ ev) => {
+    const elem = /** @type {ProductDisplay} */ (ev.target);
+    elem.setAttribute('adding-to-cart', '');
+
     const res = await fetch(
       `https://api.escuelajs.co/api/v1/products/${ev.detail.id}`,
     );
+    /** @type {Product} */
     const prod = await res.json();
 
-    // TODO: Add to cart
+    const itemIdx = findItemIndex(prod.id);
+    if (itemIdx !== -1) {
+      setItemQuantityByIndex(itemIdx, getItem(itemIdx).quantity + 1);
+    } else {
+      addToCart({
+        id: prod.id,
+        name: prod.title,
+        price: prod.price,
+        quantity: 1,
+      });
+    }
+
+    elem.removeAttribute('adding-to-cart');
+    showToast('Added to cart!');
+
     // TODO: Cart UI
   },
 );

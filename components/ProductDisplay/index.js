@@ -3,7 +3,13 @@
 import getHTMLTemplate from '@/getHTMLTemplate.js';
 
 export default class ProductDisplay extends HTMLElement {
-  static observedAttributes = ['prod-id', 'prod-title', 'price', 'image'];
+  static observedAttributes = [
+    'prod-id',
+    'prod-title',
+    'price',
+    'image',
+    'adding-to-cart',
+  ];
 
   #isInitialized = false;
   #isBound = false;
@@ -52,6 +58,8 @@ export default class ProductDisplay extends HTMLElement {
    * ```
    */
   #dispatchAddToCart = () => {
+    if (this.hasAttribute('adding-to-cart')) return;
+
     this.dispatchEvent(
       new CustomEvent('addtocart', {
         bubbles: true,
@@ -96,7 +104,19 @@ export default class ProductDisplay extends HTMLElement {
 
     this.$prodTitle.innerText = this.prodTitle;
     this.$price.innerText = `$${this.price}`;
-    this.$image.src = this.image;
+    if (this.$image.src !== this.image) this.$image.src = this.image;
+
+    const addToShoppingCartImage = /** @type {HTMLImageElement} */ (
+      this.$addToShoppingCart.firstElementChild
+    );
+
+    if (this.hasAttribute('adding-to-cart')) {
+      this.$addToShoppingCart.classList.add('animate-spin');
+      addToShoppingCartImage.src = '../../public/loader-circle [rose-500].png';
+    } else {
+      this.$addToShoppingCart.classList.remove('animate-spin');
+      addToShoppingCartImage.src = '../../public/shopping-cart [rose-500].png';
+    }
   }
 
   /**
