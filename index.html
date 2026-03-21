@@ -24,8 +24,11 @@
     </div>
 
     <div class="flex items-center gap-4 relative">
-      <button class="cursor-pointer size-8">
+      <button class="cursor-pointer size-8 relative">
         <img src="./public/shopping-cart.png" alt="Your shopping cart" />
+        <p id="cart-size"
+          class="absolute -top-2 -right-2 items-center justify-center hidden px-2 rounded-full aspect-square text-xs bg-rose-500 font-bold text-white transition-all">
+        </p>
       </button>
 
       <button class="cursor-pointer size-8" id="dropdown1-btn">

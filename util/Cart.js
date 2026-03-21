@@ -87,3 +87,7 @@ export function addCartChangeListener(listener) {
 export function removeCartChangeListener(listener) {
   onCartChangeListeners.delete(listener);
 }
+
+export function getCartSize() {
+  return cart.reduce((pv, cv) => pv + cv.quantity, 0);
+}

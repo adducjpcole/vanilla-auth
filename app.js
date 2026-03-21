@@ -1,3 +1,4 @@
+import { addCartChangeListener, getCartSize } from '@/Cart.js';
 import './product-display.js';
 import * as auth from '@/auth.js';
 
@@ -11,16 +12,16 @@ if (auth.getCurrentUser()) {
     location.reload();
   });
 
-  const usernameDisplays = document.getElementsByClassName('$username');
-  for (let i = 0; i < usernameDisplays.length; i++) {
-    const elem = usernameDisplays.item(i);
-    elem.textContent = auth.getCurrentUser().username;
+  const $usernameDisplays = document.getElementsByClassName('$username');
+  for (let i = 0; i < $usernameDisplays.length; i++) {
+    const $elem = $usernameDisplays.item(i);
+    $elem.textContent = auth.getCurrentUser().username;
   }
 
-  const emailDisplays = document.getElementsByClassName('$email');
-  for (let i = 0; i < emailDisplays.length; i++) {
-    const elem = emailDisplays.item(i);
-    elem.textContent = auth.getCurrentUser().email;
+  const $emailDisplays = document.getElementsByClassName('$email');
+  for (let i = 0; i < $emailDisplays.length; i++) {
+    const $elem = $emailDisplays.item(i);
+    $elem.textContent = auth.getCurrentUser().email;
   }
 } else {
   // Else, if user is unauthenticated:
@@ -36,14 +37,31 @@ if (auth.getCurrentUser()) {
 }
 
 {
-  let dropdownBtn = document.getElementById('dropdown1-btn');
+  let $dropdownBtn = document.getElementById('dropdown1-btn');
 
-  for (let i = 1; dropdownBtn !== null; i++) {
-    const dropdownMenu = document.getElementById(`dropdown${i}-menu`);
-    dropdownBtn.addEventListener('click', () => {
-      dropdownMenu.classList.toggle('hidden');
+  for (let i = 1; $dropdownBtn !== null; i++) {
+    const $dropdownMenu = document.getElementById(`dropdown${i}-menu`);
+    $dropdownBtn.addEventListener('click', () => {
+      $dropdownMenu.classList.toggle('hidden');
     });
 
-    dropdownBtn = document.getElementById(`dropdown${i + 1}-btn`);
+    $dropdownBtn = document.getElementById(`dropdown${i + 1}-btn`);
   }
 }
+
+const $cartSize = document.getElementById('cart-size');
+function renderCartSize() {
+  const cartSize = getCartSize();
+  if (cartSize === 0) {
+    $cartSize.classList.remove('flex');
+    $cartSize.classList.add('hidden');
+  } else {
+    $cartSize.classList.add('flex');
+    $cartSize.classList.remove('hidden');
+
+    $cartSize.innerText = cartSize.toString();
+  }
+}
+renderCartSize();
+
+addCartChangeListener(renderCartSize);

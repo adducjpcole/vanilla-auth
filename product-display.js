@@ -5,7 +5,6 @@ import {
   addToCart,
   findItemIndex,
   getItem,
-  setItemQuantity,
   setItemQuantityByIndex,
 } from '@/Cart.js';
 
@@ -60,8 +59,6 @@ $productsDisplay.addEventListener(
 
     elem.removeAttribute('adding-to-cart');
     showToast('Added to cart!');
-
-    // TODO: Cart UI
   },
 );
 
