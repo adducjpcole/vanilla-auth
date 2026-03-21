@@ -8,8 +8,8 @@ export default class DualRangeInput extends HTMLElement {
     'max',
     'step',
     'precision',
-    'value-min',
-    'value-max',
+    'in-min',
+    'in-max',
     'disabled',
     'name-min',
     'name-max',
@@ -94,10 +94,8 @@ export default class DualRangeInput extends HTMLElement {
     this.#isBound = false;
   }
 
-  #isSyncingToAttributes = false;
-
   attributeChangedCallback() {
-    if (!this.#isInitialized || this.#isSyncingToAttributes) return;
+    if (!this.#isInitialized) return;
     this.#syncFromAttributes();
     this.#update();
   }
@@ -122,9 +120,9 @@ export default class DualRangeInput extends HTMLElement {
   #syncFromAttributes() {
     this.precision = this.#getNumberAttr('precision', this.precision);
 
-    const min = this.#getAttr('min', this.$min.getAttribute('min') || '0');
-    const max = this.#getAttr('max', this.$max.getAttribute('max') || '100');
-    const step = this.#getAttr('step', this.$min.getAttribute('step') || '1');
+    const min = this.#getAttr('min', '0');
+    const max = this.#getAttr('max', '100');
+    const step = this.#getAttr('step', '1');
 
     this.$min.min = min;
     this.$max.max = max;
@@ -132,14 +130,11 @@ export default class DualRangeInput extends HTMLElement {
     this.$min.step = step;
     this.$max.step = step;
 
-    const valueMin = this.#getAttr(
-      'value-min',
-      this.$min.getAttribute('value') || min,
-    );
-    const valueMax = this.#getAttr(
-      'value-max',
-      this.$max.getAttribute('value') || max,
-    );
+    const valueMin = this.#getAttr('value-min', min);
+    if (valueMin < min) this.setAttribute('value-min', min);
+
+    const valueMax = this.#getAttr('value-max', max);
+    if (valueMax > max) this.setAttribute('value-max', max);
 
     this.$min.value = valueMin;
     this.$max.value = valueMax;
@@ -152,13 +147,13 @@ export default class DualRangeInput extends HTMLElement {
       this.$max.disabled = false;
     }
 
-    const nameMin = this.getAttribute('name-min');
-    const nameMax = this.getAttribute('name-max');
+    const nameMin = this.#getAttr('name-min');
+    const nameMax = this.#getAttr('name-max');
     if (nameMin !== null) this.$min.name = nameMin;
     if (nameMax !== null) this.$max.name = nameMax;
 
-    const ariaLabelMin = this.getAttribute('aria-label-min');
-    const ariaLabelMax = this.getAttribute('aria-label-max');
+    const ariaLabelMin = this.#getAttr('aria-label-min');
+    const ariaLabelMax = this.#getAttr('aria-label-max');
     if (ariaLabelMin !== null)
       this.$min.setAttribute('aria-label', ariaLabelMin);
     if (ariaLabelMax !== null)
@@ -208,10 +203,8 @@ export default class DualRangeInput extends HTMLElement {
       `calc(${maxFillPercentage}% + (${maxFillThumb} * var(--dri-thumb-width)))`,
     );
 
-    this.#isSyncingToAttributes = true;
-    this.setAttribute('value-min', this.$min.value);
-    this.setAttribute('value-max', this.$max.value);
-    this.#isSyncingToAttributes = false;
+    this.setAttribute('real-value-min', this.$min.value);
+    this.setAttribute('real-value-max', this.$max.value);
   }
 
   /**

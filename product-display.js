@@ -1,8 +1,5 @@
 import DualRangeInput from './components/DualRangeInput/index.js';
 
-/** @type {DualRangeInput} */
-const $priceRange = document.querySelector('#price-range');
-
 /** @type {HTMLSelectElement} */
 const $category = document.querySelector('#category');
 
@@ -32,23 +29,33 @@ const $prevPage = document.querySelector('#prev-page');
 /** @type {HTMLButtonElement} */
 const $nextPage = document.querySelector('#next-page');
 
+/** @type {DualRangeInput} */
+const $priceRange = document.querySelector('#price-range');
+
+/** @type {HTMLParagraphElement} */
+const $valueMinPrice = document.querySelector('#value-min-price');
+/** @type {HTMLParagraphElement} */
+const $valueMaxPrice = document.querySelector('#value-max-price');
+
 async function render() {
+  const priceRange = getPriceRange();
+
   $prevPage.disabled = true;
   $nextPage.disabled = true;
+  $valueMinPrice.innerText = `$${priceRange.minPrice}`;
+  $valueMaxPrice.innerText = `$${priceRange.maxPrice}`;
 
   /** @type {Product[]} */
   let prodList;
 
   try {
-    const priceRange = getPriceRange();
-
     // Doesn't play nicely with 0 for some reason
     const res = await fetch(
       `https://api.escuelajs.co/api/v1/products?offset=${
         getPage() * 25
       }&limit=25&categoryId=${getCategoryId()}&price_min=${
         priceRange.minPrice > 0 ? priceRange.minPrice : Number.EPSILON
-      }&price_max=${priceRange.minPrice === priceRange.maxPrice ? Number.EPSILON : priceRange.maxPrice}`,
+      }&price_max=${priceRange.maxPrice > 0 ? priceRange.maxPrice : Number.EPSILON}`,
     );
     console.log(res.url);
     prodList = await res.json();
@@ -77,54 +84,20 @@ async function render() {
 }
 
 const [setPriceRange, getPriceRange] = (() => {
-  let minPrice = 0;
-  let maxPrice = Number.MAX_SAFE_INTEGER;
+  let minPrice = Number.parseFloat($priceRange.getAttribute('value-min'));
+  let maxPrice = Number.parseFloat($priceRange.getAttribute('value-max'));
 
   return [
     (/** @type {number} */ min, /** @type {number} */ max) => {
       minPrice = min;
       maxPrice = max;
+
       render();
     },
     () => {
       return { minPrice, maxPrice };
     },
   ];
-})();
-
-(async () => {
-  try {
-    let offset = 0;
-    const limit = 50;
-    let max = 0;
-
-    while (true) {
-      const res = await fetch(
-        `https://api.escuelajs.co/api/v1/products?offset=${offset}&limit=${limit}`,
-      );
-      const products = await res.json();
-
-      if (products.length === 0) break;
-
-      for (const p of products) {
-        if (p.price > max) max = p.price;
-      }
-
-      offset += limit;
-    }
-
-    const maxPriceDisplays = document.getElementsByClassName('$max-price');
-    for (let i = 0; i < maxPriceDisplays.length; i++) {
-      const elem = maxPriceDisplays.item(i);
-      elem.textContent = `$${max}`;
-    }
-
-    $priceRange.setAttribute('max', max.toString());
-    $priceRange.setAttribute('value-min', '0');
-    $priceRange.setAttribute('value-max', max.toString());
-  } catch {
-    $priceRange.setAttribute('max', '1000');
-  }
 })();
 
 const [setCategoryId, getCategoryId] = (() => {
@@ -156,10 +129,10 @@ const [setPage, getPage] = (() => {
 })();
 
 $priceRange.addEventListener('change', () => {
-  const min = Number.parseFloat($priceRange.getAttribute('value-min'));
-  const max = Number.parseFloat($priceRange.getAttribute('value-max'));
-
-  setPriceRange(min, max);
+  setPriceRange(
+    Number.parseFloat($priceRange.getAttribute('real-value-min')),
+    Number.parseFloat($priceRange.getAttribute('real-value-max')),
+  );
 });
 
 $category.addEventListener('change', () => {
