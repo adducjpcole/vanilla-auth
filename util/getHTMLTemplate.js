@@ -1,4 +1,4 @@
-/** @type {Map<RequestInfo | URL, Promise<DocumentFragment>>} */
+/** @type {Map<RequestInfo | URL, Promise<HTMLTemplateElement>>} */
 const pool = new Map();
 
 /**
@@ -6,7 +6,7 @@ const pool = new Map();
  */
 export default async function getHTMLTemplate(input) {
   if (!pool.has(input)) {
-    const templatePromise = fetch(input)
+    const tplPromise = fetch(input)
       .then((res) => {
         if (!res.ok)
           throw new Error(
@@ -18,10 +18,10 @@ export default async function getHTMLTemplate(input) {
       .then((html) => {
         const tpl = document.createElement('template');
         tpl.innerHTML = html.trim();
-        return tpl.content;
+        return tpl;
       });
 
-    pool.set(input, templatePromise);
+    pool.set(input, tplPromise);
   }
 
   return pool.get(input);

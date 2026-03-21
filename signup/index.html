@@ -1,59 +1,54 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Signup</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script type="importmap">
-    {
-      "imports": {
-        "@/": "../util/"
+      {
+        "imports": {
+          "@/": "../util/"
+        }
       }
-    }
-  </script>
+    </script>
   <script type="module" src="../util/@requireUnauth.js"></script>
 </head>
 
 <body class="flex justify-center items-center min-h-screen bg-neutral-100">
   <main class="w-3/4 md:w-1/2 p-4 shadow-xl">
-    <h1 class="text-2xl mb-4">
-      Sign Up
-    </h1>
+    <h1 class="text-2xl mb-4">Sign Up</h1>
 
     <form class="flex flex-col gap-2">
       <div>
         <div class="flex justify-between">
           <label for="username">Username</label>
           <input name="username" id="username" type="text"
-            class="border-b-2 border-neutral-400 hover:border-black focus:border-black focus:outline-none w-32 md:w-48 lg:w-96">
+            class="border-b-2 border-neutral-400 hover:border-black focus:border-black focus:outline-none w-32 md:w-48 lg:w-96" />
         </div>
 
-        <p id="username-error" class="text-red-500">
-        </p>
+        <p id="username-error" class="text-red-500"></p>
       </div>
 
       <div>
         <div class="flex justify-between">
           <label for="email">Email</label>
           <input name="email" id="email" type="email"
-            class="border-b-2 border-neutral-400 hover:border-black focus:border-black focus:outline-none w-32 md:w-48 lg:w-96">
+            class="border-b-2 border-neutral-400 hover:border-black focus:border-black focus:outline-none w-32 md:w-48 lg:w-96" />
         </div>
 
-        <p id="email-error" class="text-red-500">
-        </p>
+        <p id="email-error" class="text-red-500"></p>
       </div>
 
       <div>
         <div class="flex justify-between">
           <label for="password">Password</label>
           <input name="password" id="password" type="password"
-            class="border-b-2 border-neutral-400 hover:border-black focus:border-black focus:outline-none w-32 md:w-48 lg:w-96">
+            class="border-b-2 border-neutral-400 hover:border-black focus:border-black focus:outline-none w-32 md:w-48 lg:w-96" />
         </div>
 
-        <p id="password-error" class="text-red-500">
-        </p>
+        <p id="password-error" class="text-red-500"></p>
       </div>
 
       <div class="mt-2">
@@ -68,7 +63,8 @@
         </button>
 
         <div class="mt-4 pt-2 border-t-1 border-neutral-500">
-          <button id="redirect-to-home" type="button" class="text-neutral-500 hover:text-black text-xs cursor-pointer transition-all">
+          <button id="redirect-to-home" type="button"
+            class="text-neutral-500 hover:text-black text-xs cursor-pointer transition-all">
             Back to home
           </button>
         </div>

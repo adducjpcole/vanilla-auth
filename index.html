@@ -7,22 +7,23 @@
   <title>Home</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script type="importmap">
-    {
-      "imports": {
-        "@/": "./util/"
+      {
+        "imports": {
+          "@/": "./util/"
+        }
       }
-    }
-  </script>
-  <script type="module" src="./util/DualRangeInput/index.js"></script>
+    </script>
+  <script type="module" src="./components/ProductDisplay/index.js"></script>
+  <script type="module" src="./components/DualRangeInput/index.js"></script>
 </head>
 
 <body class="flex flex-col min-h-screen bg-neutral-100">
   <header class="flex justify-between items-center py-6 px-16">
     <div>
-      <h1 class="text-4xl font-bold text-rose-500"> Shopping </h1>
+      <h1 class="text-4xl font-bold text-rose-500">Shopping</h1>
     </div>
 
-    <div class="flex items-center gap-3 relative">
+    <div class="flex items-center gap-4 relative">
       <button class="cursor-pointer size-8">
         <img src="./public/shopping-cart.png" alt="Your shopping cart" />
       </button>
@@ -44,9 +45,7 @@
 
           <p class="@auth $email" class="text-sm">email@email.com</p>
           <img src="./public/circle-user-round.png" alt="Your profile picture" class="@auth size-14" />
-          <p class="@auth">
-            Hi, <span class="$username">Username</span>!
-          </p>
+          <p class="@auth">Hi, <span class="$username">Username</span>!</p>
           <button id="logout" type="button"
             class="@auth bg-rose-500 py-2 px-4 rounded text-white cursor-pointer hover:scale-105 hover:shadow-2xl transition-all w-full">
             Log Out
@@ -56,12 +55,14 @@
     </div>
   </header>
 
-  <main class="flex-1 flex items-stretch justify-between py-4 px-16 gap-4">
-    <div class="flex-3">
+  <main class="flex-1 flex flex-col-reverse lg:flex-row items-stretch justify-between py-4 px-16 gap-4">
+    <div class="flex-1">
       <div class="flex sticky justify-between items-center">
         <p>
-          SHOWING <span class="$products-offset">1</span> - <span class="$products-limit">25</span>
+          SHOWING <span id="products-start">1</span> -
+          <span id="products-end">25</span>
         </p>
+
         <form>
           <select name="category" id="category" class="$category outline-none">
             <option value="all" selected>ALL</option>
@@ -69,33 +70,34 @@
         </form>
       </div>
 
-      <div class="grid grid-cols-3">
-        <div class="flex flex-col items-center">
-          <div>
-            <img src="./public/circle-user-round.png" />
-          </div>
-        </div>
-      </div>
-    </div>
+      <div id="product-displays" class="grid grid-cols-3 lg:grid-cols-4 gap-4"></div>
 
-    <div class="flex-1">
-      <form>
-        <p class="font-semibold">
-          Filter by price
-        </p>
-        <dual-range-input min="0" max="1000" step="10" name-min="min-price" value-min="100" name-max="max-price"
-          value-max="750"></dual-range-input>
-        <div class="flex justify-between">
-          <p>$0</p>
-          <p>$1000</p>
-        </div>
-
-        <button
-          class="bg-rose-500 py-2 px-4 rounded text-white cursor-pointer hover:scale-105 hover:shadow-2xl transition-all">
-          FILTER
+      <footer class="flex w-full justify-between px-2 py-4">
+        <button id="prev-page" class="cursor-pointer text-neutral-500 hover:text-black disabled:invisible"
+          type="button">
+          Previous
         </button>
-      </form>
+        <button id="next-page" class="cursor-pointer text-neutral-500 hover:text-black disabled:invisible"
+          type="button">
+          Next
+        </button>
+      </footer>
     </div>
+
+    <form class="w-full lg:w-1/4">
+      <p class="font-semibold">Filter by price</p>
+      <dual-range-input min="0" max="1000" step="10" name-min="min-price" value-min="100" name-max="max-price"
+        value-max="750"></dual-range-input>
+      <div class="flex justify-between">
+        <p>$0</p>
+        <p>$1000</p>
+      </div>
+
+      <button
+        class="bg-rose-500 py-2 px-4 rounded text-white cursor-pointer hover:scale-105 hover:shadow-2xl transition-all">
+        FILTER
+      </button>
+    </form>
   </main>
 
   <script type="module" src="app.js"></script>

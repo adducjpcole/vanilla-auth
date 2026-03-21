@@ -9,6 +9,101 @@ import * as auth from '@/auth.js';
   });
 }
 
+/**
+ * @typedef {Object} Category
+ * @property {number} id
+ * @property {string} name
+ * @property {string} slug
+ * @property {string} image
+ * @property {string} creationAt
+ * @property {string} updatedAt
+ */
+
+/**
+ * @typedef {Object} Product
+ * @property {number} id
+ * @property {string} title
+ * @property {string} slug
+ * @property {number} price
+ * @property {string} description
+ * @property {Category} category
+ * @property {string[]} images
+ * @property {string} creationAt
+ * @property {string} updatedAt
+ */
+
+/**
+ * @param {number} page
+ * @returns {Promise<Product[]>}
+ */
+async function getProducts(page) {
+  return fetch(
+    `https://api.escuelajs.co/api/v1/products?offset=${page * 25}&limit=25`,
+  )
+    .then((res) => res.json())
+    .then((json) => {
+      return json;
+    });
+}
+
+{
+  /** @type {HTMLSpanElement} */
+  const $productsStart = document.querySelector('#products-start');
+  /** @type {HTMLSpanElement} */
+  const $productsEnd = document.querySelector('#products-end');
+  const $productsDisplay = document.querySelector('#product-displays');
+  /** @type {HTMLButtonElement} */
+  const $prevPage = document.querySelector('#prev-page');
+  /** @type {HTMLButtonElement} */
+  const $nextPage = document.querySelector('#next-page');
+
+  const [setCurPage, getCurPage] = (() => {
+    let page = 0;
+
+    return [
+      (/** @type {number} */ newPage) => {
+        if (newPage < 0 || (newPage > page && $nextPage.disabled)) return;
+
+        $productsDisplay.innerHTML = '';
+        $prevPage.disabled = true;
+        $nextPage.disabled = true;
+        page = newPage;
+
+        getProducts(newPage).then((prodList) => {
+          const frag = document.createDocumentFragment();
+
+          prodList.forEach((prod) => {
+            const elem = document.createElement('product-display');
+            elem.setAttribute('prod-id', `${prod.id}`);
+            elem.setAttribute('prod-title', prod.title);
+            elem.setAttribute('price', `${prod.price}`);
+            elem.setAttribute('image', prod.images[0]);
+            frag.append(elem);
+          });
+
+          $productsStart.innerText = `${newPage * 25 + 1}`;
+          $productsEnd.innerText = `${newPage * 25 + prodList.length}`;
+          $productsDisplay.append(frag);
+          $prevPage.disabled = page === 0;
+          $nextPage.disabled = prodList.length !== 25;
+        });
+      },
+      () => {
+        return page;
+      },
+    ];
+  })();
+  setCurPage(0);
+
+  $prevPage.addEventListener('click', () => {
+    setCurPage(getCurPage() - 1);
+  });
+
+  $nextPage.addEventListener('click', () => {
+    setCurPage(getCurPage() + 1);
+  });
+}
+
 if (auth.getCurrentUser()) {
   // If user is authenticated:
   [...document.getElementsByClassName('@unauth')].forEach((v) => v.remove());

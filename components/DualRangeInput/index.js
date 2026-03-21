@@ -39,6 +39,28 @@ export default class DualRangeInput extends HTMLElement {
     this.$max.dataset.ready = 'true';
   }
 
+  #bind() {
+    if (this.#isBound) return;
+
+    this.$min.addEventListener('input', this.updateCeil);
+    this.$max.addEventListener('input', this.updateFloor);
+
+    this.$min.addEventListener('focus', this.updateCeil);
+    this.$max.addEventListener('focus', this.updateFloor);
+
+    this.$min.addEventListener('mousedown', this.updateCeil);
+    this.$max.addEventListener('mousedown', this.updateFloor);
+
+    this.$min.addEventListener('touchstart', this.updateCeil, {
+      passive: true,
+    });
+    this.$max.addEventListener('touchstart', this.updateFloor, {
+      passive: true,
+    });
+
+    this.#isBound = true;
+  }
+
   disconnectedCallback() {
     if (!this.#isBound) return;
 
@@ -101,7 +123,7 @@ export default class DualRangeInput extends HTMLElement {
       new URL('./template.html', import.meta.url),
     );
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.appendChild(tpl.cloneNode(true));
+    this.shadowRoot.appendChild(tpl.content.cloneNode(true));
 
     /** @type {HTMLInputElement} */
     this.$min = this.shadowRoot.querySelector('#min');
@@ -155,28 +177,6 @@ export default class DualRangeInput extends HTMLElement {
       this.$min.setAttribute('aria-label', ariaLabelMin);
     if (ariaLabelMax !== null)
       this.$max.setAttribute('aria-label', ariaLabelMax);
-  }
-
-  #bind() {
-    if (this.#isBound) return;
-
-    this.$min.addEventListener('input', this.updateCeil);
-    this.$max.addEventListener('input', this.updateFloor);
-
-    this.$min.addEventListener('focus', this.updateCeil);
-    this.$max.addEventListener('focus', this.updateFloor);
-
-    this.$min.addEventListener('mousedown', this.updateCeil);
-    this.$max.addEventListener('mousedown', this.updateFloor);
-
-    this.$min.addEventListener('touchstart', this.updateCeil, {
-      passive: true,
-    });
-    this.$max.addEventListener('touchstart', this.updateFloor, {
-      passive: true,
-    });
-
-    this.#isBound = true;
   }
 
   /**
