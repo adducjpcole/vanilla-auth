@@ -6,30 +6,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Signup</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <script type="module">
-    import { generateTabName, removeRecentAuthTabIfCurrent } from './util.js';
-    import * as auth from './auth.js';
-
-    if (!window.name)
-      window.name = generateTabName();
-
-    window.addEventListener('beforeunload', removeRecentAuthTabIfCurrent);
-
-    if (auth.getCurrentUser())
-      document.location.href = 'home.html';
+  <script type="importmap">
+    {
+      "imports": {
+        "@/": "/util/"
+      }
+    }
   </script>
+  <script type="module" src="/util/@requireUnauth.js"></script>
 </head>
 
 <body class="flex justify-center items-center min-h-screen bg-neutral-100">
   <main class="w-3/4 md:w-1/2 p-4 shadow-xl">
     <h1 class="text-2xl mb-4">
-      create a new account
+      Sign Up
     </h1>
 
     <form class="flex flex-col gap-2">
       <div>
         <div class="flex justify-between">
-          <label for="username">username</label>
+          <label for="username">Username</label>
           <input name="username" id="username" type="text"
             class="border-b-2 border-neutral-400 hover:border-black focus:border-black focus:outline-none w-32 md:w-48 lg:w-96">
         </div>
@@ -38,10 +34,9 @@
         </p>
       </div>
 
-
       <div>
         <div class="flex justify-between">
-          <label for="email">email</label>
+          <label for="email">Email</label>
           <input name="email" id="email" type="email"
             class="border-b-2 border-neutral-400 hover:border-black focus:border-black focus:outline-none w-32 md:w-48 lg:w-96">
         </div>
@@ -52,7 +47,7 @@
 
       <div>
         <div class="flex justify-between">
-          <label for="password">password</label>
+          <label for="password">Password</label>
           <input name="password" id="password" type="password"
             class="border-b-2 border-neutral-400 hover:border-black focus:border-black focus:outline-none w-32 md:w-48 lg:w-96">
         </div>
@@ -64,18 +59,24 @@
       <div class="mt-2">
         <button type="submit"
           class="bg-rose-500 py-2 px-4 rounded text-white cursor-pointer hover:scale-105 hover:shadow-2xl transition-all">
-          sign up
+          Sign Up
         </button>
         or
         <button id="redirect-to-login" type="button"
           class="text-rose-600 cursor-pointer hover:scale-105 hover:shadow-2xl transition-all">
-          log in
+          Log In
         </button>
+
+        <div class="mt-4 pt-2 border-t-1 border-neutral-500">
+          <button id="redirect-to-home" type="button" class="text-neutral-500 hover:text-black text-xs cursor-pointer transition-all">
+            Back to home
+          </button>
+        </div>
       </div>
     </form>
   </main>
 
-  <script type="module" src="signup.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 
 </html>

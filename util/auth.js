@@ -40,7 +40,9 @@ export function login(email, password) {
   if (user === undefined) return null;
 
   localStorage.setItem('currentUser', JSON.stringify(user));
-  document.location.href = 'home.html';
+
+  const url = new URL(window.location.href);
+  document.location.href = url.searchParams.get('redirect') || '/';
   return structuredClone(user);
 }
 

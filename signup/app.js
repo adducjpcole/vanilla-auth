@@ -1,4 +1,4 @@
-import * as auth from './auth.js';
+import * as auth from '@/auth.js';
 
 const state = (() => {
   let __state__ = {
@@ -83,9 +83,11 @@ form.addEventListener('submit', (ev) => {
   const elems = form.elements;
 
   state.set({
-    username: elems.namedItem('username').value,
-    email: elems.namedItem('email').value,
-    password: elems.namedItem('password').value,
+    username: /** @type {HTMLInputElement} */ (elems.namedItem('username'))
+      .value,
+    email: /** @type {HTMLInputElement} */ (elems.namedItem('email')).value,
+    password: /** @type {HTMLInputElement} */ (elems.namedItem('password'))
+      .value,
   });
 
   if (hasError) return;
@@ -95,9 +97,13 @@ form.addEventListener('submit', (ev) => {
     return;
   }
 
-  document.location.href = 'login.html';
+  document.location.href = '/login/';
 });
 
 document.getElementById('redirect-to-login').addEventListener('click', () => {
-  document.location.href = 'login.html';
+  document.location.href = '/login/';
+});
+
+document.getElementById('redirect-to-home').addEventListener('click', () => {
+  document.location.href = '/';
 });

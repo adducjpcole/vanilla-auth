@@ -1,4 +1,4 @@
-import * as auth from './auth.js';
+import * as auth from '@/auth.js';
 
 const state = (() => {
   let __state__ = {
@@ -29,22 +29,27 @@ form.addEventListener('submit', (ev) => {
   const elems = form.elements;
 
   state.set({
-    email: elems.namedItem('email').value,
-    password: elems.namedItem('password').value,
+    email: /** @type {HTMLInputElement} */ (elems.namedItem('email')).value,
+    password: /** @type {HTMLInputElement} */ (elems.namedItem('password'))
+      .value,
   });
 
   const user = auth.login(state.email(), state.password());
 
   if (!user) {
     loginError.textContent = 'Invalid email or password';
+    return;
   } else {
     loginError.textContent = '';
   }
 
-  // already done by `login()`
-  // document.location.href = 'home.html';
+  // User redirect is already done by `auth.login()`
 });
 
 document.getElementById('redirect-to-signup').addEventListener('click', () => {
-  document.location.href = 'signup.html';
+  document.location.href = '/signup/';
+});
+
+document.getElementById('redirect-to-home').addEventListener('click', () => {
+  document.location.href = '/';
 });
