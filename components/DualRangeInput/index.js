@@ -25,15 +25,15 @@ export default class DualRangeInput extends HTMLElement {
 
     this.precision = 3;
 
-    this.updateFloor = () => this.update('floor');
-    this.updateCeil = () => this.update('ceil');
+    this.updateFloor = () => this.#update('floor');
+    this.updateCeil = () => this.#update('ceil');
   }
 
   async connectedCallback() {
     await this.#build();
     this.#syncFromAttributes();
     this.#bind();
-    this.update();
+    this.#update();
 
     this.$min.dataset.ready = 'true';
     this.$max.dataset.ready = 'true';
@@ -79,41 +79,12 @@ export default class DualRangeInput extends HTMLElement {
     this.#isBound = false;
   }
 
+  #isSyncingToAttributes = false;
+
   attributeChangedCallback() {
-    if (!this.#isInitialized) return;
+    if (!this.#isInitialized || this.#isSyncingToAttributes) return;
     this.#syncFromAttributes();
-    this.update();
-  }
-
-  get minValue() {
-    return Number(this.$min?.value ?? 0);
-  }
-
-  set minValue(v) {
-    if (!this.$min) return;
-    this.$min.value = String(v);
-    this.update();
-  }
-
-  get maxValue() {
-    return Number(this.$max?.value ?? 0);
-  }
-
-  set maxValue(v) {
-    if (!this.$max) return;
-    this.$max.value = String(v);
-    this.update();
-  }
-
-  get value() {
-    return [this.minValue, this.maxValue];
-  }
-
-  set value([min, max]) {
-    if (!this.$min || !this.$max) return;
-    this.$min.value = String(min);
-    this.$max.value = String(max);
-    this.update();
+    this.#update();
   }
 
   async #build() {
@@ -182,7 +153,7 @@ export default class DualRangeInput extends HTMLElement {
   /**
    * @param {"ceil"|"floor"} method
    */
-  update(method = 'ceil') {
+  #update(method = 'ceil') {
     const min = parseFloat(this.$min.min);
     const max = parseFloat(this.$max.max);
     const step = parseFloat(this.$min.step) || 1;
@@ -221,6 +192,11 @@ export default class DualRangeInput extends HTMLElement {
       '--dri-gradient-position',
       `calc(${maxFillPercentage}% + (${maxFillThumb} * var(--dri-thumb-width)))`,
     );
+
+    this.#isSyncingToAttributes = true;
+    this.setAttribute('value-min', this.$min.value);
+    this.setAttribute('value-max', this.$max.value);
+    this.#isSyncingToAttributes = false;
   }
 
   /**
