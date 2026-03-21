@@ -9,44 +9,21 @@ import * as auth from '@/auth.js';
   });
 }
 
-/**
- * @typedef {Object} Category
- * @property {number} id
- * @property {string} name
- * @property {string} slug
- * @property {string} image
- * @property {string} creationAt
- * @property {string} updatedAt
- */
-
-/**
- * @typedef {Object} Product
- * @property {number} id
- * @property {string} title
- * @property {string} slug
- * @property {number} price
- * @property {string} description
- * @property {Category} category
- * @property {string[]} images
- * @property {string} creationAt
- * @property {string} updatedAt
- */
-
-/**
- * @param {number} page
- * @returns {Promise<Product[]>}
- */
-async function getProducts(page) {
-  return fetch(
-    `https://api.escuelajs.co/api/v1/products?offset=${page * 25}&limit=25`,
-  )
-    .then((res) => res.json())
-    .then((json) => {
-      return json;
-    });
-}
-
 {
+  /**
+   * @param {number} page
+   * @returns {Promise<Product[]>}
+   */
+  async function getProducts(page) {
+    return fetch(
+      `https://api.escuelajs.co/api/v1/products?offset=${page * 25}&limit=25`,
+    )
+      .then((res) => res.json())
+      .then((json) => {
+        return json;
+      });
+  }
+
   /** @type {HTMLSpanElement} */
   const $productsStart = document.querySelector('#products-start');
   /** @type {HTMLSpanElement} */

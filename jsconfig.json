@@ -8,5 +8,5 @@
       "@/*": ["./util/*"]
     }
   },
-  "include": ["**/*.js"]
+  "include": ["types.js", "**/*.js"]
 }
