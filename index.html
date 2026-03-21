@@ -64,8 +64,8 @@
         </p>
 
         <form>
-          <select name="category" id="category" class="$category outline-none">
-            <option value="all" selected>ALL</option>
+          <select name="category" id="category" class="outline-none">
+            <option value="" name="" selected>ALL</option>
           </select>
         </form>
       </div>
@@ -73,12 +73,12 @@
       <div id="product-displays" class="grid grid-cols-3 lg:grid-cols-4 gap-4"></div>
 
       <footer class="flex w-full justify-between px-2 py-4">
-        <button id="prev-page" class="cursor-pointer text-neutral-500 hover:text-black disabled:invisible"
-          type="button">
+        <button id="prev-page" class="cursor-pointer text-neutral-500 hover:text-black disabled:invisible" type="button"
+          disabled>
           Previous
         </button>
-        <button id="next-page" class="cursor-pointer text-neutral-500 hover:text-black disabled:invisible"
-          type="button">
+        <button id="next-page" class="cursor-pointer text-neutral-500 hover:text-black disabled:invisible" type="button"
+          disabled>
           Next
         </button>
       </footer>
@@ -86,8 +86,8 @@
 
     <form class="w-full lg:w-1/4">
       <p class="font-semibold">Filter by price</p>
-      <dual-range-input min="0" max="1000" step="10" name-min="min-price" value-min="100" name-max="max-price"
-        value-max="750"></dual-range-input>
+      <dual-range-input id="price-range" min="0" max="1000" step="10" name-min="min-price" value-min="100"
+        name-max="max-price" value-max="750"></dual-range-input>
       <div class="flex justify-between">
         <p>$0</p>
         <p>$1000</p>
