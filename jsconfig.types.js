@@ -23,3 +23,7 @@
  * @property {string} creationAt
  * @property {string} updatedAt
  */
+
+/**
+ * @typedef {CustomEvent<{ id: number }>} AddToCartEvent
+ */

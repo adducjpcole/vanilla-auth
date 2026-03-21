@@ -46,14 +46,14 @@ export default class ProductDisplay extends HTMLElement {
    * Usage:
    * ```js
    * document.querySelector("my-element")
-   *   .addEventListener("add-to-cart", () => {
+   *   .addEventListener("addtocart", () => {
    *     console.log("Add to cart clicked!");
    *   });
    * ```
    */
   #dispatchAddToCart = () => {
     this.dispatchEvent(
-      new CustomEvent('add-to-cart', {
+      new CustomEvent('addtocart', {
         bubbles: true,
         composed: true,
         detail: {

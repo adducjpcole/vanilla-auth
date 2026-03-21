@@ -24,6 +24,20 @@ const $productsStart = document.querySelector('#products-start');
 /** @type {HTMLSpanElement} */
 const $productsEnd = document.querySelector('#products-end');
 const $productsDisplay = document.querySelector('#product-displays');
+
+$productsDisplay.addEventListener(
+  'addtocart',
+  async (/** @type {AddToCartEvent} */ ev) => {
+    const res = await fetch(
+      `https://api.escuelajs.co/api/v1/products/${ev.detail.id}`,
+    );
+    const prod = await res.json();
+
+    // TODO: Add to cart
+    // TODO: Cart UI
+  },
+);
+
 /** @type {HTMLButtonElement} */
 const $prevPage = document.querySelector('#prev-page');
 /** @type {HTMLButtonElement} */
@@ -40,6 +54,7 @@ const $valueMaxPrice = document.querySelector('#value-max-price');
 async function render() {
   const priceRange = getPriceRange();
 
+  $productsDisplay.innerHTML = `<img src="./public/loader-circle [rose-500].png" class="animate-spin">`;
   $prevPage.disabled = true;
   $nextPage.disabled = true;
   $valueMinPrice.innerText = `$${priceRange.minPrice}`;
@@ -57,11 +72,9 @@ async function render() {
         priceRange.minPrice > 0 ? priceRange.minPrice : Number.EPSILON
       }&price_max=${priceRange.maxPrice > 0 ? priceRange.maxPrice : Number.EPSILON}`,
     );
-    console.log(res.url);
     prodList = await res.json();
   } catch (err) {
-    console.error('not ok');
-    throw new err();
+    throw err;
   }
 
   const frag = document.createDocumentFragment();
