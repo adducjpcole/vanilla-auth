@@ -26,8 +26,6 @@ export function signup(username, email, password) {
   return true;
 }
 
-const homeUrl = new URL('../', import.meta.url);
-
 /**
  * Returns user if it exists in users table
  *
@@ -44,7 +42,7 @@ export function login(email, password) {
   localStorage.setItem('currentUser', JSON.stringify(user));
 
   document.location.href =
-    localStorage.getItem('redirectAfterLogin') || homeUrl.href;
+    localStorage.getItem('redirectAfterLogin') || import.meta.resolve('../');
 
   return structuredClone(user);
 }

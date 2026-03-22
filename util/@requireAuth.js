@@ -1,8 +1,7 @@
 import * as auth from '@/auth.js';
 
-const loginUrl = new URL('../login/', import.meta.url);
 if (!auth.getCurrentUser()) {
-  document.location.href = loginUrl.href;
+  document.location.href = import.meta.resolve('../login/');
 } else {
   document.documentElement.style.visibility = 'visible';
 }

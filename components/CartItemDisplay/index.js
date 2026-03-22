@@ -76,9 +76,7 @@ export default class CartItemDisplay extends HTMLElement {
   async #build() {
     if (this.#isInitialized) return;
 
-    const tpl = await getHTMLTemplate(
-      new URL('./template.html', import.meta.url),
-    );
+    const tpl = await getHTMLTemplate(import.meta.resolve('./template.html'));
     this.appendChild(tpl.content.cloneNode(true));
 
     /** @type {HTMLParagraphElement} */

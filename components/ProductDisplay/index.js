@@ -76,9 +76,7 @@ export default class ProductDisplay extends HTMLElement {
   async #build() {
     if (this.#isInitialized) return;
 
-    const tpl = await getHTMLTemplate(
-      new URL('./template.html', import.meta.url),
-    );
+    const tpl = await getHTMLTemplate(import.meta.resolve('./template.html'));
     this.appendChild(tpl.content.cloneNode(true));
 
     /** @type {HTMLParagraphElement} */
@@ -93,14 +91,9 @@ export default class ProductDisplay extends HTMLElement {
     this.#isInitialized = true;
   }
 
-  #loaderSrc = new URL(
-    '../../public/loader-circle [rose-500].png',
-    import.meta.url,
-  );
-  #addToCartSrc = new URL(
-    '../../public/shopping-cart [rose-500].png',
-    import.meta.url,
-  );
+  #loaderSrc = import.meta.resolve('../../public/loader-circle [rose-500].png');
+  #addToCartSrc = import.meta
+    .resolve('../../public/shopping-cart [rose-500].png');
 
   #syncFromAttributes() {
     this.prodId = this.#getNumberAttr('prod-id', this.prodId);
@@ -118,10 +111,10 @@ export default class ProductDisplay extends HTMLElement {
 
     if (this.hasAttribute('adding-to-cart')) {
       this.$addToCart.classList.add('animate-spin');
-      addToCart.src = this.#loaderSrc.href;
+      addToCart.src = this.#loaderSrc;
     } else {
       this.$addToCart.classList.remove('animate-spin');
-      addToCart.src = this.#addToCartSrc.href;
+      addToCart.src = this.#addToCartSrc;
     }
   }
 

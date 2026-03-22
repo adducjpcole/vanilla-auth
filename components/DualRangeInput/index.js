@@ -109,9 +109,7 @@ export default class DualRangeInput extends HTMLElement {
   async #build() {
     if (this.#isInitialized) return;
 
-    const tpl = await getHTMLTemplate(
-      new URL('./template.html', import.meta.url),
-    );
+    const tpl = await getHTMLTemplate(import.meta.resolve('./template.html'));
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(tpl.content.cloneNode(true));
 

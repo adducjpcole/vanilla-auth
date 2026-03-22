@@ -14,14 +14,14 @@ if (auth.getCurrentUser()) {
 
   const $usernameDisplays = document.getElementsByClassName('$username');
   for (let i = 0; i < $usernameDisplays.length; i++) {
-    const $elem = $usernameDisplays.item(i);
-    $elem.textContent = auth.getCurrentUser().username;
+    const elem = $usernameDisplays.item(i);
+    elem.textContent = auth.getCurrentUser().username;
   }
 
   const $emailDisplays = document.getElementsByClassName('$email');
   for (let i = 0; i < $emailDisplays.length; i++) {
-    const $elem = $emailDisplays.item(i);
-    $elem.textContent = auth.getCurrentUser().email;
+    const elem = $emailDisplays.item(i);
+    elem.textContent = auth.getCurrentUser().email;
   }
 } else {
   // Else, if user is unauthenticated:

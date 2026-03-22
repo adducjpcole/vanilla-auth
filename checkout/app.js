@@ -3,18 +3,14 @@ import { addCartChangeListener, getCart, removeAll } from '@/Cart.js';
 import showToast from '@/showToast.js';
 
 {
-  // init
-  const $cartItemDisplays = document.getElementById('cart-item-displays');
-  const cartItems = getCart();
-
   const frag = document.createDocumentFragment();
-  for (const cartItem of cartItems) {
+  for (const cartItem of getCart()) {
     const elem = document.createElement('cart-item-display');
     elem.setAttribute('item-id', cartItem.id.toString());
 
     frag.append(elem);
   }
-  $cartItemDisplays.append(frag);
+  document.getElementById('cart-item-displays').append(frag);
 }
 
 let total = 0;
@@ -34,6 +30,7 @@ let total = 0;
   const $placeOrder = /** @type {HTMLButtonElement} */ (
     document.getElementById('place-order')
   );
+
   $placeOrder.addEventListener('click', async () => {
     const cart = getCart();
 
@@ -54,8 +51,7 @@ let total = 0;
       $placeOrder.disabled = true;
 
       setTimeout(() => {
-        const loginUrl = new URL('../login/', import.meta.url);
-        document.location.href = loginUrl.href;
+        document.location.href = import.meta.resolve('../login/');
       }, 1200);
       return;
     }
