@@ -43,10 +43,18 @@ export function login(email, password) {
 
   localStorage.setItem('currentUser', JSON.stringify(user));
 
-  const url = new URL(window.location.href);
-  document.location.href = url.searchParams.get('redirect') || homeUrl.href;
+  document.location.href =
+    localStorage.getItem('redirectAfterLogin') || homeUrl.href;
+
   return structuredClone(user);
 }
+
+const initiallyHadRedirectAfterLogin =
+  localStorage.getItem('redirectAfterLogin') !== null;
+window.addEventListener('unload', () => {
+  if (initiallyHadRedirectAfterLogin)
+    localStorage.removeItem('redirectAfterLogin');
+});
 
 /**
  * Returns current session's user

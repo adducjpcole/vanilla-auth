@@ -40,6 +40,13 @@ export function removeFromCart(itemId) {
   return removeFromCartByIndex(idx);
 }
 
+export function removeAll() {
+  cart.splice(0, cart.length);
+  localStorage.setItem('cart', JSON.stringify(cart));
+
+  for (const listener of onCartChangeListeners) listener();
+}
+
 /**
  * @param {number} itemIdx
  * @param {number} quantity

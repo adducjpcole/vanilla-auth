@@ -1,7 +1,11 @@
-// Exported purely for static analysis purposes
-
 import getHTMLTemplate from '@/getHTMLTemplate.js';
 
+/**
+ * Special thanks to Stanko for https://github.com/Stanko/dual-range-input
+ *
+ * I don't understand the math behind it (apart from that it is the midpoint)
+ * but it works.
+ */
 export default class DualRangeInput extends HTMLElement {
   static observedAttributes = [
     'min',
@@ -25,9 +29,11 @@ export default class DualRangeInput extends HTMLElement {
 
     this.precision = 3;
 
+    // These decide how midpoint is rounded
     this.updateFloor = () => this.#update('floor');
     this.updateCeil = () => this.#update('ceil');
 
+    // Bubble change event outside shadow DOM
     this.onChange = () => {
       this.dispatchEvent(
         new Event('change', {

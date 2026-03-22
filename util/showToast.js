@@ -1,24 +1,22 @@
-const toastContainer = document.getElementById('toast-container');
+const $toastContainer = document.getElementById('toast-container');
 
-export default function showToast(message = 'Added to cart') {
-  const toast = document.createElement('div');
+/**
+ * @param {string} message
+ */
+export default function showToast(message) {
+  const $toast = document.createElement('div');
 
-  toast.className =
-    'flex items-center gap-2 rounded-full bg-rose-500 px-4 py-3 text-white shadow-lg transition-all opacity-0 translate-y-2';
+  $toast.className =
+    'flex items-center gap-2 rounded-full bg-rose-500 px-4 py-3 text-white shadow-lg transition-all';
+  $toast.textContent = message;
 
-  toast.textContent = message;
-
-  toastContainer.appendChild(toast);
-
-  requestAnimationFrame(() => {
-    toast.classList.remove('opacity-0', 'translate-y-2');
-  });
+  $toastContainer.appendChild($toast);
 
   setTimeout(() => {
-    toast.classList.add('opacity-0', 'translate-y-2');
+    $toast.classList.add('opacity-0', 'translate-y-2');
 
     setTimeout(() => {
-      toast.remove();
+      $toast.remove();
     }, 300);
   }, 2000);
 }

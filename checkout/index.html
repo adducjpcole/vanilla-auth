@@ -40,9 +40,14 @@
         <p>$<span id="total">0.00</span></p>
       </div>
 
-      <button
-        class="bg-rose-500 text-white py-2 rounded hover:scale-105 hover:shadow-md active:scale-95 active:shadow-none transition-all">
+      <button id="place-order"
+        class="group relative bg-rose-500 text-white py-2 rounded not-disabled:hover:scale-105 not-disabled:hover:shadow-md not-disabled:active:scale-95 not-disabled:active:shadow-none disabled:bg-transparent disabled:text-transparent transition-all">
         Place Order
+
+        <div id="place-order-loader"
+          class="absolute hidden group-disabled:flex justify-center items-center z-10 top-0 left-0 right-0 pointer-events-none h-full">
+          <img src="../public/loader-circle [rose-500].png" class="animate-spin size-8" />
+        </div>
       </button>
     </section>
 
