@@ -97,13 +97,13 @@ form.addEventListener('submit', (ev) => {
     return;
   }
 
-  document.location.href = '/login/';
+  document.location.href = '../login/';
 });
 
 document.getElementById('redirect-to-login').addEventListener('click', () => {
-  document.location.href = '/login/';
+  document.location.href = '../login/';
 });
 
 document.getElementById('redirect-to-home').addEventListener('click', () => {
-  document.location.href = '/';
+  document.location.href = '../';
 });

@@ -28,11 +28,11 @@ if (auth.getCurrentUser()) {
   [...document.getElementsByClassName('@auth')].forEach((v) => v.remove());
 
   document.getElementById('signup').addEventListener('click', () => {
-    document.location.href = '/signup/';
+    document.location.href = './signup/';
   });
 
   document.getElementById('login').addEventListener('click', () => {
-    document.location.href = '/login/';
+    document.location.href = './login/';
   });
 }
 

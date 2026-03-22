@@ -32,7 +32,7 @@ export default class ProductDisplay extends HTMLElement {
   #bind() {
     if (this.#isBound) return;
 
-    this.$addToShoppingCart.addEventListener('click', this.#dispatchAddToCart);
+    this.$addToCart.addEventListener('click', this.#dispatchAddToCart);
 
     this.#isBound = true;
   }
@@ -40,10 +40,7 @@ export default class ProductDisplay extends HTMLElement {
   disconnectedCallback() {
     if (!this.#isBound) return;
 
-    this.$addToShoppingCart.removeEventListener(
-      'click',
-      this.#dispatchAddToCart,
-    );
+    this.$addToCart.removeEventListener('click', this.#dispatchAddToCart);
 
     this.#isBound = false;
   }
@@ -91,10 +88,19 @@ export default class ProductDisplay extends HTMLElement {
     /** @type {HTMLImageElement} */
     this.$image = this.querySelector('#image');
     /** @type {HTMLButtonElement} */
-    this.$addToShoppingCart = this.querySelector('#add-to-shopping-cart');
+    this.$addToCart = this.querySelector('#add-to-cart');
 
     this.#isInitialized = true;
   }
+
+  #loaderSrc = new URL(
+    '../../public/loader-circle [rose-500].png',
+    import.meta.url,
+  );
+  #addToCartSrc = new URL(
+    '../../public/shopping-cart [rose-500].png',
+    import.meta.url,
+  );
 
   #syncFromAttributes() {
     this.prodId = this.#getNumberAttr('prod-id', this.prodId);
@@ -106,16 +112,16 @@ export default class ProductDisplay extends HTMLElement {
     this.$price.innerText = `$${this.price}`;
     if (this.$image.src !== this.image) this.$image.src = this.image;
 
-    const addToShoppingCartImage = /** @type {HTMLImageElement} */ (
-      this.$addToShoppingCart.firstElementChild
+    const addToCart = /** @type {HTMLImageElement} */ (
+      this.$addToCart.firstElementChild
     );
 
     if (this.hasAttribute('adding-to-cart')) {
-      this.$addToShoppingCart.classList.add('animate-spin');
-      addToShoppingCartImage.src = '../../public/loader-circle [rose-500].png';
+      this.$addToCart.classList.add('animate-spin');
+      addToCart.src = this.#loaderSrc.href;
     } else {
-      this.$addToShoppingCart.classList.remove('animate-spin');
-      addToShoppingCartImage.src = '../../public/shopping-cart [rose-500].png';
+      this.$addToCart.classList.remove('animate-spin');
+      addToCart.src = this.#addToCartSrc.href;
     }
   }
 

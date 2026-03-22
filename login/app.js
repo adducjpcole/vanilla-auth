@@ -47,9 +47,9 @@ form.addEventListener('submit', (ev) => {
 });
 
 document.getElementById('redirect-to-signup').addEventListener('click', () => {
-  document.location.href = '/signup/';
+  document.location.href = '../signup/';
 });
 
 document.getElementById('redirect-to-home').addEventListener('click', () => {
-  document.location.href = '/';
+  document.location.href = '../';
 });
