@@ -23,7 +23,7 @@ let total = 0;
   const $total = document.getElementById('total');
   function renderTotal() {
     total = getCart().reduce((pv, cv) => pv + cv.price * cv.quantity, 0);
-    $total.innerText = total.toString();
+    $total.textContent = total.toString();
   }
   renderTotal();
 

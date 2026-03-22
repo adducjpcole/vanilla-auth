@@ -64,7 +64,7 @@ document.getElementById('checkout').addEventListener('click', () => {
       $cartSize.classList.add('flex');
       $cartSize.classList.remove('hidden');
 
-      $cartSize.innerText = cartSize.toString();
+      $cartSize.textContent = cartSize.toString();
     }
   }
   renderCartSize();

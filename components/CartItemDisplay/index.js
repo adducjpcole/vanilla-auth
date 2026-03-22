@@ -101,15 +101,15 @@ export default class CartItemDisplay extends HTMLElement {
   #update = () => {
     const item = Cart.getItem(this.itemIdx);
 
-    this.$name.innerText = item.name;
-    this.$price.innerText = item.price.toString();
+    this.$name.textContent = item.name;
+    this.$price.textContent = item.price.toString();
 
     for (const $quantity of this.$quantity) {
-      $quantity.innerText = item.quantity.toString();
+      $quantity.textContent = item.quantity.toString();
     }
 
     const subtotal = (item.quantity * item.price).toString();
-    this.$subtotal.innerText = subtotal;
+    this.$subtotal.textContent = subtotal;
   };
 
   #syncFromAttributes() {

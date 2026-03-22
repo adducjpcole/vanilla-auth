@@ -7,6 +7,7 @@ import {
   getItem,
   setItemQuantityByIndex,
 } from '@/Cart.js';
+import debounce from '@/debounce.js';
 
 /** @type {HTMLSelectElement} */
 const $category = document.querySelector('#category');
@@ -19,7 +20,7 @@ fetch('https://api.escuelajs.co/api/v1/categories')
       const elem = document.createElement('option');
       elem.value = category.id.toString();
       elem.setAttribute('name', elem.value);
-      elem.innerText = category.name.toUpperCase();
+      elem.textContent = category.name.toUpperCase();
 
       frag.appendChild(elem);
     });
@@ -27,10 +28,12 @@ fetch('https://api.escuelajs.co/api/v1/categories')
     $category.appendChild(frag);
   });
 
-/** @type {HTMLSpanElement} */
-const $productsStart = document.querySelector('#products-start');
-/** @type {HTMLSpanElement} */
-const $productsEnd = document.querySelector('#products-end');
+const $productsStart = /** @type {HTMLSpanElement} */ (
+  document.querySelector('#products-start')
+);
+const $productsEnd = /** @type {HTMLSpanElement} */ (
+  document.querySelector('#products-end')
+);
 const $productsDisplay = document.querySelector('#product-displays');
 
 $productsDisplay.addEventListener(
@@ -62,128 +65,139 @@ $productsDisplay.addEventListener(
   },
 );
 
-/** @type {HTMLButtonElement} */
-const $prevPage = document.querySelector('#prev-page');
-/** @type {HTMLButtonElement} */
-const $nextPage = document.querySelector('#next-page');
+const $prevPage = /** @type {HTMLButtonElement} */ (
+  document.querySelector('#prev-page')
+);
+const $nextPage = /** @type {HTMLButtonElement} */ (
+  document.querySelector('#next-page')
+);
+const $priceRange = /** @type {DualRangeInput} */ (
+  document.querySelector('#price-range')
+);
+const $valueMinPrice = /** @type {HTMLParagraphElement} */ (
+  document.querySelector('#value-min-price')
+);
+const $valueMaxPrice = /** @type {HTMLParagraphElement} */ (
+  document.querySelector('#value-max-price')
+);
 
-/** @type {DualRangeInput} */
-const $priceRange = document.querySelector('#price-range');
+const state = {
+  page: 0,
+  categoryId: '',
+  priceRange: {
+    min: Number.parseFloat($priceRange.getAttribute('value-min')),
+    max: Number.parseFloat($priceRange.getAttribute('value-max')),
+  },
+};
 
-/** @type {HTMLParagraphElement} */
-const $valueMinPrice = document.querySelector('#value-min-price');
-/** @type {HTMLParagraphElement} */
-const $valueMaxPrice = document.querySelector('#value-max-price');
+/**
+ * @param {number} value
+ */
+function setPage(value) {
+  if (value < 0 || (value > state.page && $nextPage.disabled)) return;
+  state.page = value;
 
-async function render() {
-  const priceRange = getPriceRange();
+  render();
+}
 
-  $productsDisplay.innerHTML = `<img src="./public/loader-circle [rose-500].png" class="animate-spin">`;
-  $prevPage.disabled = true;
-  $nextPage.disabled = true;
-  $valueMinPrice.innerText = `$${priceRange.minPrice}`;
-  $valueMaxPrice.innerText = `$${priceRange.maxPrice}`;
+/**
+ * @param {string} value
+ */
+function setCategoryId(value) {
+  state.categoryId = value;
 
-  /** @type {Product[]} */
-  let prodList;
+  setPage(0);
+  // render();
+}
 
-  try {
-    // Doesn't play nicely with 0 for some reason
-    const res = await fetch(
-      `https://api.escuelajs.co/api/v1/products?offset=${
-        getPage() * 25
-      }&limit=25&categoryId=${getCategoryId()}&price_min=${
-        priceRange.minPrice > 0 ? priceRange.minPrice : Number.EPSILON
-      }&price_max=${priceRange.maxPrice > 0 ? priceRange.maxPrice : Number.EPSILON}`,
-    );
-    prodList = await res.json();
-  } catch (err) {
-    throw err;
-  }
+/**
+ * @param {number} min
+ * @param {number} max
+ */
+function setPriceRange(min, max) {
+  state.priceRange.min = min;
+  state.priceRange.max = max;
 
+  render();
+}
+
+/**
+ * @param {number} page
+ * @param {string} categoryId
+ * @param {{min: number, max: number}} price
+ */
+function buildProductURL(page, categoryId, price) {
+  const params = new URLSearchParams({
+    offset: (page * 25).toString(),
+    limit: '25',
+    categoryId,
+    price_min: (price.min || Number.EPSILON).toString(),
+    price_max: (price.max || Number.EPSILON).toString(),
+  });
+
+  return `https://api.escuelajs.co/api/v1/products?${params}`;
+}
+
+/**
+ * @param {Product[]} products
+ */
+function createProductElements(products) {
   const frag = document.createDocumentFragment();
 
-  prodList.forEach((prod) => {
+  products.forEach((prod) => {
     const elem = document.createElement('product-display');
     elem.setAttribute('prod-id', `${prod.id}`);
     elem.setAttribute('prod-title', prod.title);
     elem.setAttribute('price', `${prod.price}`);
     elem.setAttribute('image', prod.images[0]);
+
     frag.append(elem);
   });
 
-  $productsStart.innerText = `${prodList.length > 0 ? getPage() * 25 + 1 : 0}`;
-  $productsEnd.innerText = `${getPage() * 25 + prodList.length}`;
-  $productsDisplay.innerHTML = '';
-  $productsDisplay.append(frag);
-  $prevPage.disabled = getPage() === 0;
-  $nextPage.disabled = prodList.length !== 25;
+  return frag;
 }
 
-const [setPriceRange, getPriceRange] = (() => {
-  let minPrice = Number.parseFloat($priceRange.getAttribute('value-min'));
-  let maxPrice = Number.parseFloat($priceRange.getAttribute('value-max'));
+let isRendered = true;
+const debouncedRender = debounce(async () => {
+  // Doesn't play nicely with 0 for some reason
+  const res = await fetch(
+    buildProductURL(state.page, state.categoryId, state.priceRange),
+  );
+  const products = /** @type {Product[]} */ (await res.json());
 
-  return [
-    (/** @type {number} */ min, /** @type {number} */ max) => {
-      minPrice = min;
-      maxPrice = max;
+  $productsStart.textContent = `${products.length > 0 ? state.page * 25 + 1 : 0}`;
+  $productsEnd.textContent = `${state.page * 25 + products.length}`;
+  $productsDisplay.innerHTML = '';
+  $productsDisplay.append(createProductElements(products));
+  $prevPage.disabled = state.page === 0;
+  $nextPage.disabled = products.length !== 25;
+  isRendered = true;
+}, 300);
 
-      render();
-    },
-    () => {
-      return { minPrice, maxPrice };
-    },
-  ];
-})();
+function render() {
+  if (isRendered) {
+    $productsDisplay.innerHTML = `<img src="./public/loader-circle [rose-500].png" class="animate-spin">`;
+    isRendered = false;
+  }
 
-const [setCategoryId, getCategoryId] = (() => {
-  let categoryId = '';
+  $prevPage.disabled = true;
+  $nextPage.disabled = true;
+  $valueMinPrice.textContent = `$${state.priceRange.min}`;
+  $valueMaxPrice.textContent = `$${state.priceRange.max}`;
 
-  return [
-    (/** @type {string} */ value) => {
-      categoryId = value;
-      setPage(0);
-    },
-    () => categoryId,
-  ];
-})();
+  debouncedRender();
+}
 
-const [setPage, getPage] = (() => {
-  let page = 0;
-
-  return [
-    async (/** @type {number} */ value) => {
-      if (value < 0 || (value > page && $nextPage.disabled)) return;
-      page = value;
-
-      render();
-    },
-    () => {
-      return page;
-    },
-  ];
-})();
-
-$priceRange.addEventListener('change', () => {
+$priceRange.addEventListener('input', () =>
   setPriceRange(
     Number.parseFloat($priceRange.getAttribute('real-value-min')),
     Number.parseFloat($priceRange.getAttribute('real-value-max')),
-  );
-});
-
-$category.addEventListener('change', () => {
-  setCategoryId($category.value);
-});
-
-$prevPage.addEventListener('click', () => {
-  setPage(getPage() - 1);
-});
-
-$nextPage.addEventListener('click', () => {
-  setPage(getPage() + 1);
-});
+  ),
+);
+$category.addEventListener('change', () => setCategoryId($category.value));
+$prevPage.addEventListener('click', () => setPage(state.page - 1));
+$nextPage.addEventListener('click', () => setPage(state.page + 1));
 
 render();
 
-export { getCategoryId, getPage };
+export default state;

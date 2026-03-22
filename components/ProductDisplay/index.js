@@ -108,8 +108,8 @@ export default class ProductDisplay extends HTMLElement {
     this.price = this.#getNumberAttr('price', this.price);
     this.image = this.#getAttr('image', this.image);
 
-    this.$prodTitle.innerText = this.prodTitle;
-    this.$price.innerText = `$${this.price}`;
+    this.$prodTitle.textContent = this.prodTitle;
+    this.$price.textContent = `$${this.price}`;
     if (this.$image.src !== this.image) this.$image.src = this.image;
 
     const addToCart = /** @type {HTMLImageElement} */ (
