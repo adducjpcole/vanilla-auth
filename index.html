@@ -18,13 +18,14 @@
 </head>
 
 <body class="flex flex-col min-h-screen bg-neutral-100">
-  <header class="flex justify-between items-center py-6 px-16">
+  <!-- Header -->
+  <header class="flex justify-between items-center py-6 px-16 bg-white">
     <div>
       <h1 class="text-4xl font-bold text-rose-500">Shopping</h1>
     </div>
 
     <div class="flex items-center gap-4 relative">
-      <button class="cursor-pointer size-8 relative">
+      <button id="checkout" class="cursor-pointer size-8 relative">
         <img src="./public/shopping-cart.png" alt="Your shopping cart" />
         <p id="cart-size"
           class="absolute -top-2 -right-2 items-center justify-center hidden px-2 rounded-full aspect-square text-xs bg-rose-500 font-bold text-white transition-all">
@@ -34,7 +35,6 @@
       <button class="cursor-pointer size-8" id="dropdown1-btn">
         <img src="./public/circle-user-round.png" alt="Your profile picture" />
       </button>
-
       <div id="dropdown1-menu" class="hidden absolute top-8 right-0 w-max mt-2 bg-white shadow-lg rounded p-4 z-10">
         <div class="flex flex-col gap-2 items-center">
           <button id="signup" type="button"
@@ -55,12 +55,15 @@
           </button>
         </div>
       </div>
+
     </div>
   </header>
 
+  <!-- Main -->
   <main class="flex-1 flex flex-col-reverse lg:flex-row items-stretch justify-between py-4 px-16 gap-4">
-    <div class="flex-1 flex flex-col">
-      <div class="flex sticky justify-between items-center">
+
+    <section class="flex-1 flex flex-col">
+      <header class="flex sticky justify-between items-center pb-2">
         <p>
           SHOWING <span id="products-start">1</span> -
           <span id="products-end">25</span>
@@ -71,7 +74,7 @@
             <option value="" name="" selected>ALL</option>
           </select>
         </form>
-      </div>
+      </header>
 
       <div id="product-displays"
         class="not-[&:has(product-display)]:flex not-[&:has(product-display)]:items-center not-[&:has(product-display)]:justify-center not-[&:has(product-display)]:flex-1 has-[product-display]:grid has-[product-display]:grid-cols-3 has-[product-display]:lg:grid-cols-4 gap-4">
@@ -87,18 +90,20 @@
           Next
         </button>
       </footer>
-    </div>
+    </section>
 
-    <form class="w-full lg:w-1/4">
+    <aside class="w-full lg:w-1/4">
       <p class="font-semibold">Filter by price</p>
       <dual-range-input id="price-range" min="0" max="2000" step="10" value-min="0" value-max="2000"></dual-range-input>
       <div class="flex justify-between">
         <p id="value-min-price"></p>
         <p id="value-max-price"></p>
       </div>
-    </form>
+    </aside>
+
   </main>
 
+  <!-- Toast -->
   <div id="toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-50">
   </div>
 
