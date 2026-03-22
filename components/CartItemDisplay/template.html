@@ -1,0 +1,18 @@
+<div class="flex justify-between items-center">
+  <div class="flex flex-col">
+    <p id="name" class="font-medium text-black">ITEM NAME</p>
+    <p class="text-xs text-neutral-500">$<span id="price">ITEM PRICE</span> &times; <span class="$quantity">ITEM
+        QUANTITY</span></p>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <!-- Quantity -->
+    <div class="flex items-center rounded overflow-hidden">
+      <button id="sub-quantity" class="px-2 hover:bg-black/5 active:bg-black/10">-</button>
+      <span class="px-3 $quantity">ITEM QUANTITY</span>
+      <button id="add-quantity" class="px-2 hover:bg-black/5 active:bg-black/10">+</button>
+    </div>
+
+    <p class="w-16 text-right">$<span id="subtotal">SUBTOTAL</span></p>
+  </div>
+</div>

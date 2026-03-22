@@ -4,7 +4,7 @@
 const cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
 /**
- * @type {Set<(cart: CartItem[]) => void>}
+ * @type {Set<() => void>}
  */
 const onCartChangeListeners = new Set();
 
@@ -15,7 +15,18 @@ export function addToCart(cartItem) {
   cart.push(cartItem);
   localStorage.setItem('cart', JSON.stringify(cart));
 
-  for (const listener of onCartChangeListeners) listener(getCart());
+  for (const listener of onCartChangeListeners) listener();
+}
+
+/**
+ * @param {number} itemIdx
+ */
+export function removeFromCartByIndex(itemIdx) {
+  const removedItem = cart.splice(itemIdx, 1)[0];
+  localStorage.setItem('cart', JSON.stringify(cart));
+
+  for (const listener of onCartChangeListeners) listener();
+  return removedItem;
 }
 
 /**
@@ -26,11 +37,7 @@ export function removeFromCart(itemId) {
   const idx = cart.findIndex((v) => v.id === itemId);
   if (idx === -1) return null;
 
-  const removedItem = cart.splice(idx, 1)[0];
-  localStorage.setItem('cart', JSON.stringify(cart));
-
-  for (const listener of onCartChangeListeners) listener(getCart());
-  return removedItem;
+  return removeFromCartByIndex(idx);
 }
 
 /**
@@ -41,7 +48,7 @@ export function setItemQuantityByIndex(itemIdx, quantity) {
   cart[itemIdx].quantity = quantity;
   localStorage.setItem('cart', JSON.stringify(cart));
 
-  for (const listener of onCartChangeListeners) listener(getCart());
+  for (const listener of onCartChangeListeners) listener();
 }
 
 /**
@@ -75,14 +82,14 @@ export function findItemIndex(itemId) {
 }
 
 /**
- * @param {(cart: CartItem[]) => void} listener
+ * @param {() => void} listener
  */
 export function addCartChangeListener(listener) {
   onCartChangeListeners.add(listener);
 }
 
 /**
- * @param {(cart: CartItem[]) => void} listener
+ * @param {() => void} listener
  */
 export function removeCartChangeListener(listener) {
   onCartChangeListeners.delete(listener);
