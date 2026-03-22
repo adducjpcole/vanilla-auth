@@ -127,6 +127,7 @@ function setPriceRange(min, max) {
  * @param {{min: number, max: number}} price
  */
 function buildProductURL(page, categoryId, price) {
+  // Doesn't play nicely with 0 for some reason
   const params = new URLSearchParams({
     offset: (page * 25).toString(),
     limit: '25',
@@ -159,11 +160,16 @@ function createProductElements(products) {
 
 let isRendered = true;
 const debouncedRender = debounce(async () => {
-  // Doesn't play nicely with 0 for some reason
   const res = await fetch(
     buildProductURL(state.page, state.categoryId, state.priceRange),
   );
-  const products = /** @type {Product[]} */ (await res.json());
+  /** @type {Product[]} */
+  const products = await res.json();
+
+  if (products.length === 0 && state.page > 0) {
+    setPage(state.page - 1);
+    return;
+  }
 
   $productsStart.textContent = `${products.length > 0 ? state.page * 25 + 1 : 0}`;
   $productsEnd.textContent = `${state.page * 25 + products.length}`;
