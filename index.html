@@ -19,7 +19,7 @@
 
 <body class="flex flex-col min-h-screen bg-neutral-100">
   <!-- Header -->
-  <header class="flex justify-between items-center py-6 px-16 bg-white">
+  <header class="flex sticky top-0 z-10 justify-between items-center py-6 px-16 bg-white">
     <div>
       <h1 class="text-4xl font-bold text-rose-500">Shopping</h1>
     </div>
@@ -35,7 +35,7 @@
       <button class="cursor-pointer size-8 hover:scale-105 active:scale-95" id="dropdown1-btn">
         <img src="./public/circle-user-round.png" alt="Your profile picture" />
       </button>
-      <div id="dropdown1-menu" class="hidden absolute top-8 right-0 w-max mt-2 bg-white shadow-lg rounded p-4 z-10">
+      <div id="dropdown1-menu" class="hidden absolute top-8 right-0 w-max mt-2 bg-white shadow-lg rounded p-4 z-50">
         <div class="flex flex-col gap-2 items-center">
           <button id="signup" type="button"
             class="@unauth bg-rose-500 py-2 px-4 rounded text-white cursor-pointer hover:scale-105 hover:shadow-md active:scale-95 active:shadow-none transition-all w-full">
