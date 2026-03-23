@@ -1,5 +1,5 @@
 import { addCartChangeListener, getCartSize } from '@/Cart.js';
-import './product-display.js';
+import './js/product-display.js';
 import * as auth from '@/auth.js';
 
 if (auth.getCurrentUser()) {

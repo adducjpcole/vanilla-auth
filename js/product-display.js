@@ -1,6 +1,6 @@
 import showToast from '@/showToast.js';
-import DualRangeInput from './components/DualRangeInput/index.js';
-import ProductDisplay from './components/ProductDisplay/index.js';
+import DualRangeInput from '../util/DualRangeInput/index.js';
+import ProductDisplay from '../components/ProductDisplay/index.js';
 import {
   addToCart,
   findItemIndex,
