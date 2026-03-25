@@ -8,6 +8,9 @@ import {
   setItemQuantityByIndex,
 } from '@/Cart.js';
 import debounce from '@/debounce.js';
+import fetchJSON from '@/fetchJson.js';
+
+const PAGE_LIMIT = 25;
 
 /** @type {HTMLSelectElement} */
 const $category = document.querySelector('#category');
@@ -42,11 +45,10 @@ $productsDisplay.addEventListener(
     const elem = /** @type {ProductDisplay} */ (ev.target);
     elem.setAttribute('adding-to-cart', '');
 
-    const res = await fetch(
+    /** @type {Product} */
+    const prod = await fetchJSON(
       `https://api.escuelajs.co/api/v1/products/${ev.detail.id}`,
     );
-    /** @type {Product} */
-    const prod = await res.json();
 
     const itemIdx = findItemIndex(prod.id);
     if (itemIdx !== -1) {
@@ -127,10 +129,10 @@ function setPriceRange(min, max) {
  * @param {{min: number, max: number}} price
  */
 function buildProductURL(page, categoryId, price) {
-  // Doesn't play nicely with 0 for some reason
+  // Use Number.EPSILON because it doesn't play nicely with 0 for some reason
   const params = new URLSearchParams({
-    offset: (page * 25).toString(),
-    limit: '25',
+    offset: (page * PAGE_LIMIT).toString(),
+    limit: PAGE_LIMIT.toString(),
     categoryId,
     price_min: (price.min || Number.EPSILON).toString(),
     price_max: (price.max || Number.EPSILON).toString(),
@@ -158,39 +160,47 @@ function createProductElements(products) {
   return frag;
 }
 
-let isRendered = true;
-const debouncedRender = debounce(async () => {
-  const res = await fetch(
-    buildProductURL(state.page, state.categoryId, state.priceRange),
-  );
-  /** @type {Product[]} */
-  const products = await res.json();
-
-  if (products.length === 0 && state.page > 0) {
-    setPage(state.page - 1);
-    return;
-  }
-
-  $productsStart.textContent = `${products.length > 0 ? state.page * 25 + 1 : 0}`;
-  $productsEnd.textContent = `${state.page * 25 + products.length}`;
-  $productsDisplay.innerHTML = '';
-  $productsDisplay.append(createProductElements(products));
-  $prevPage.disabled = state.page === 0;
-  $nextPage.disabled = products.length !== 25;
-  isRendered = true;
-}, 300);
-
-function render() {
-  if (isRendered) {
+let isLoading = false;
+function prefetchRender() {
+  if (!isLoading) {
     $productsDisplay.innerHTML = `<img src="./public/loader-circle [rose-500].png" class="animate-spin">`;
-    isRendered = false;
+    isLoading = true;
   }
 
   $prevPage.disabled = true;
   $nextPage.disabled = true;
   $valueMinPrice.textContent = `$${state.priceRange.min}`;
   $valueMaxPrice.textContent = `$${state.priceRange.max}`;
+}
 
+let requestId = 0;
+const debouncedRender = debounce(async () => {
+  const id = ++requestId;
+
+  /** @type {Product[]} */
+  const products = await fetchJSON(
+    buildProductURL(state.page, state.categoryId, state.priceRange),
+  );
+
+  // Ignore old responses that replied late
+  if (id !== requestId) return;
+
+  if (products.length === 0 && state.page > 0) {
+    setPage(state.page - 1);
+    return;
+  }
+
+  $productsStart.textContent = `${products.length > 0 ? state.page * PAGE_LIMIT + 1 : 0}`;
+  $productsEnd.textContent = `${state.page * PAGE_LIMIT + products.length}`;
+  $productsDisplay.innerHTML = '';
+  $productsDisplay.append(createProductElements(products));
+  $prevPage.disabled = state.page === 0;
+  $nextPage.disabled = products.length !== PAGE_LIMIT;
+  isLoading = false;
+}, 300);
+
+function render() {
+  prefetchRender();
   debouncedRender();
 }
 
