@@ -31,6 +31,10 @@ fetch('https://api.escuelajs.co/api/v1/categories')
     $category.appendChild(frag);
   });
 
+$category.addEventListener('change', () =>
+  setState({ categoryId: $category.value, page: 0 }),
+);
+
 const $productsStart = /** @type {HTMLSpanElement} */ (
   document.querySelector('#products-start')
 );
@@ -86,56 +90,42 @@ const $valueMaxPrice = /** @type {HTMLParagraphElement} */ (
 const state = {
   page: 0,
   categoryId: '',
-  priceRange: {
-    min: Number.parseFloat($priceRange.getAttribute('value-min')),
-    max: Number.parseFloat($priceRange.getAttribute('value-max')),
-  },
+  priceMin: Number.parseFloat($priceRange.getAttribute('value-min')),
+  priceMax: Number.parseFloat($priceRange.getAttribute('value-max')),
+  /** @type {Product[]|null} */
+  products: null,
 };
 
 /**
- * @param {number} value
+ * @template {Partial<typeof state>} T
+ * @param {T} patch
  */
-function setPage(value) {
-  if (value < 0 || (value > state.page && $nextPage.disabled)) return;
-  state.page = value;
+function setState(patch) {
+  if (
+    patch.page &&
+    (patch.page < 0 ||
+      (patch.page > state.page && state.products.length <= PAGE_LIMIT))
+  )
+    patch.page = state.page;
 
-  render();
-}
-
-/**
- * @param {string} value
- */
-function setCategoryId(value) {
-  state.categoryId = value;
-
-  setPage(0);
-  // render();
-}
-
-/**
- * @param {number} min
- * @param {number} max
- */
-function setPriceRange(min, max) {
-  state.priceRange.min = min;
-  state.priceRange.max = max;
-
-  render();
+  Object.assign(state, patch);
+  render(state);
 }
 
 /**
  * @param {number} page
  * @param {string} categoryId
- * @param {{min: number, max: number}} price
+ * @param {number} priceMin
+ * @param {number} priceMax
  */
-function buildProductURL(page, categoryId, price) {
+function buildProductURL(page, categoryId, priceMin, priceMax) {
   // Use Number.EPSILON because it doesn't play nicely with 0 for some reason
   const params = new URLSearchParams({
     offset: (page * PAGE_LIMIT).toString(),
-    limit: PAGE_LIMIT.toString(),
+    limit: (PAGE_LIMIT + 1).toString(),
     categoryId,
-    price_min: (price.min || Number.EPSILON).toString(),
-    price_max: (price.max || Number.EPSILON).toString(),
+    price_min: (priceMin || Number.EPSILON).toString(),
+    price_max: (priceMax || Number.EPSILON).toString(),
   });
 
   return `https://api.escuelajs.co/api/v1/products?${params}`;
@@ -147,7 +137,9 @@ function buildProductURL(page, categoryId, price) {
 function createProductElements(products) {
   const frag = document.createDocumentFragment();
 
-  products.forEach((prod) => {
+  products.forEach((prod, idx) => {
+    if (idx === PAGE_LIMIT) return;
+
     const elem = document.createElement('product-display');
     elem.setAttribute('prod-id', `${prod.id}`);
     elem.setAttribute('prod-title', prod.title);
@@ -160,60 +152,54 @@ function createProductElements(products) {
   return frag;
 }
 
-let isLoading = false;
-function prefetchRender() {
-  if (!isLoading) {
-    $productsDisplay.innerHTML = `<img src="./public/loader-circle [rose-500].png" class="animate-spin">`;
-    isLoading = true;
-  }
+let requestId = 0;
+const debouncedRender = debounce(
+  /** @param {typeof state} state */ async (state) => {
+    const id = ++requestId;
 
+    state.products = await fetchJSON(
+      buildProductURL(
+        state.page,
+        state.categoryId,
+        state.priceMin,
+        state.priceMax,
+      ),
+    );
+
+    // Ignore old responses that replied late
+    if (id !== requestId) return;
+
+    $productsStart.textContent = `${state.products.length > 0 ? state.page * PAGE_LIMIT + 1 : 0}`;
+    $productsEnd.textContent = `${state.page * PAGE_LIMIT + (state.products.length - 1)}`;
+    $productsDisplay.innerHTML = '';
+    $productsDisplay.append(createProductElements(state.products));
+    $prevPage.disabled = state.page === 0;
+    $nextPage.disabled = state.products.length !== PAGE_LIMIT;
+  },
+  300,
+);
+
+/**
+ * @param {typeof state} state
+ */
+function render(state) {
   $prevPage.disabled = true;
   $nextPage.disabled = true;
-  $valueMinPrice.textContent = `$${state.priceRange.min}`;
-  $valueMaxPrice.textContent = `$${state.priceRange.max}`;
-}
+  $valueMinPrice.textContent = `$${state.priceMin}`;
+  $valueMaxPrice.textContent = `$${state.priceMax}`;
 
-let requestId = 0;
-const debouncedRender = debounce(async () => {
-  const id = ++requestId;
-
-  /** @type {Product[]} */
-  const products = await fetchJSON(
-    buildProductURL(state.page, state.categoryId, state.priceRange),
-  );
-
-  // Ignore old responses that replied late
-  if (id !== requestId) return;
-
-  if (products.length === 0 && state.page > 0) {
-    setPage(state.page - 1);
-    return;
-  }
-
-  $productsStart.textContent = `${products.length > 0 ? state.page * PAGE_LIMIT + 1 : 0}`;
-  $productsEnd.textContent = `${state.page * PAGE_LIMIT + products.length}`;
-  $productsDisplay.innerHTML = '';
-  $productsDisplay.append(createProductElements(products));
-  $prevPage.disabled = state.page === 0;
-  $nextPage.disabled = products.length !== PAGE_LIMIT;
-  isLoading = false;
-}, 300);
-
-function render() {
-  prefetchRender();
-  debouncedRender();
+  debouncedRender(state);
 }
 
 $priceRange.addEventListener('input', () =>
-  setPriceRange(
-    Number.parseFloat($priceRange.getAttribute('real-value-min')),
-    Number.parseFloat($priceRange.getAttribute('real-value-max')),
-  ),
+  setState({
+    priceMin: Number.parseFloat($priceRange.getAttribute('real-value-min')),
+    priceMax: Number.parseFloat($priceRange.getAttribute('real-value-max')),
+  }),
 );
-$category.addEventListener('change', () => setCategoryId($category.value));
-$prevPage.addEventListener('click', () => setPage(state.page - 1));
-$nextPage.addEventListener('click', () => setPage(state.page + 1));
+$prevPage.addEventListener('click', () => setState({ page: state.page - 1 }));
+$nextPage.addEventListener('click', () => setState({ page: state.page + 1 }));
 
-render();
+render(state);
 
 export default state;

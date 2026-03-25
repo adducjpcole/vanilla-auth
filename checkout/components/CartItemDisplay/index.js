@@ -1,5 +1,3 @@
-// Exported purely for static analysis purposes
-
 import getHTMLTemplate from '@/getHTMLTemplate.js';
 import * as Cart from '@/Cart.js';
 

@@ -1,13 +1,13 @@
 import { addCartChangeListener, getCartSize } from '@/Cart.js';
-import './js/product-display.js';
-import * as auth from '@/auth.js';
+import './js/product-displays.js';
+import { getCurrentUser, logout } from '@/auth.js';
 
-if (auth.getCurrentUser()) {
+if (getCurrentUser()) {
   // If user is authenticated:
   [...document.getElementsByClassName('@unauth')].forEach((v) => v.remove());
 
   document.getElementById('logout').addEventListener('click', () => {
-    auth.logout();
+    logout();
 
     location.reload();
   });
@@ -15,13 +15,13 @@ if (auth.getCurrentUser()) {
   const $usernameDisplays = document.getElementsByClassName('$username');
   for (let i = 0; i < $usernameDisplays.length; i++) {
     const elem = $usernameDisplays.item(i);
-    elem.textContent = auth.getCurrentUser().username;
+    elem.textContent = getCurrentUser().username;
   }
 
   const $emailDisplays = document.getElementsByClassName('$email');
   for (let i = 0; i < $emailDisplays.length; i++) {
     const elem = $emailDisplays.item(i);
-    elem.textContent = auth.getCurrentUser().email;
+    elem.textContent = getCurrentUser().email;
   }
 } else {
   // Else, if user is unauthenticated:
@@ -38,7 +38,6 @@ if (auth.getCurrentUser()) {
 
 {
   let $dropdownBtn = document.getElementById('dropdown1-btn');
-
   for (let i = 1; $dropdownBtn !== null; i++) {
     const $dropdownMenu = document.getElementById(`dropdown${i}-menu`);
     $dropdownBtn.addEventListener('click', () => {
