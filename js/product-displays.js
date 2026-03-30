@@ -174,7 +174,7 @@ const debouncedRender = debounce(
     $productsDisplay.innerHTML = '';
     $productsDisplay.append(createProductElements(state.products));
     $prevPage.disabled = state.page === 0;
-    $nextPage.disabled = state.products.length !== PAGE_LIMIT;
+    $nextPage.disabled = state.products.length <= PAGE_LIMIT;
   },
   300,
 );
