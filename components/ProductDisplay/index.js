@@ -33,6 +33,8 @@ export default class ProductDisplay extends HTMLElement {
     if (this.#isBound) return;
 
     this.$addToCart.addEventListener('click', this.#dispatchAddToCart);
+    this.$image.addEventListener('load', this.#onImageLoad);
+    this.$image.addEventListener('error', this.#onImageError);
 
     this.#isBound = true;
   }
@@ -41,6 +43,8 @@ export default class ProductDisplay extends HTMLElement {
     if (!this.#isBound) return;
 
     this.$addToCart.removeEventListener('click', this.#dispatchAddToCart);
+    this.$image.addEventListener('load', this.#onImageLoad);
+    this.$image.removeEventListener('error', this.#onImageError);
 
     this.#isBound = false;
   }
@@ -68,6 +72,16 @@ export default class ProductDisplay extends HTMLElement {
     );
   };
 
+  #onImageLoad = () => {
+    this.$image.classList.remove('hidden');
+    this.$imagePlaceholder.classList.add('hidden');
+  };
+
+  #onImageError = () => {
+    this.$imagePlaceholder.classList.remove('hidden');
+    this.$image.classList.add('hidden');
+  };
+
   attributeChangedCallback() {
     if (!this.#isInitialized) return;
     this.#syncFromAttributes();
@@ -85,6 +99,8 @@ export default class ProductDisplay extends HTMLElement {
     this.$price = this.querySelector('#price');
     /** @type {HTMLImageElement} */
     this.$image = this.querySelector('#image');
+    /** @type {HTMLImageElement} */
+    this.$imagePlaceholder = this.querySelector('#image-placeholder');
     /** @type {HTMLButtonElement} */
     this.$addToCart = this.querySelector('#add-to-cart');
 
