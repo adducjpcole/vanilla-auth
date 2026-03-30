@@ -123,7 +123,9 @@ function buildProductURL(page, categoryId, priceMin, priceMax) {
   const params = new URLSearchParams({
     offset: (page * PAGE_LIMIT).toString(),
     limit: (PAGE_LIMIT + 1).toString(),
-    categoryId,
+    // TODO: Replace categorySlug with categoryId if filtering is allowed
+    // categoryId,
+    categorySlug: 'clothes',
     price_min: (priceMin || Number.EPSILON).toString(),
     price_max: (priceMax || Number.EPSILON).toString(),
   });
