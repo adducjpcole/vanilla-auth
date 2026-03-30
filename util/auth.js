@@ -49,7 +49,7 @@ export function login(email, password) {
 
 const initiallyHadRedirectAfterLogin =
   localStorage.getItem('redirectAfterLogin') !== null;
-window.addEventListener('unload', () => {
+window.addEventListener('pagehide', () => {
   if (initiallyHadRedirectAfterLogin)
     localStorage.removeItem('redirectAfterLogin');
 });
