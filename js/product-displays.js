@@ -8,7 +8,7 @@ import {
   setItemQuantityByIndex,
 } from '@/Cart.js';
 import debounce from '@/debounce.js';
-import fetchJSON from '@/fetchJson.js';
+import fetchJSON from '@/fetchJSON.js';
 
 const PAGE_LIMIT = 25;
 
