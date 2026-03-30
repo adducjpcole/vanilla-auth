@@ -101,6 +101,7 @@ export default class ProductDisplay extends HTMLElement {
     this.$image = this.querySelector('#image');
     /** @type {HTMLImageElement} */
     this.$imagePlaceholder = this.querySelector('#image-placeholder');
+    this.$imagePlaceholder.src = import.meta.resolve('../../public/file-image [neutral-500].png');
     /** @type {HTMLButtonElement} */
     this.$addToCart = this.querySelector('#add-to-cart');
 
@@ -116,6 +117,7 @@ export default class ProductDisplay extends HTMLElement {
     this.prodTitle = this.#getAttr('prod-title', 'No Title Found');
     this.price = this.#getNumberAttr('price', this.price);
     this.image = this.#getAttr('image', this.image);
+
 
     this.$prodTitle.textContent = this.prodTitle;
     this.$price.textContent = `$${this.price}`;
