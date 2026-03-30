@@ -170,7 +170,7 @@ const debouncedRender = debounce(
     if (id !== requestId) return;
 
     $productsStart.textContent = `${state.products.length > 0 ? state.page * PAGE_LIMIT + 1 : 0}`;
-    $productsEnd.textContent = `${state.page * PAGE_LIMIT + (state.products.length - 1)}`;
+    $productsEnd.textContent = `${state.page * PAGE_LIMIT + Math.max(0, state.products.length - 1)}`;
     $productsDisplay.innerHTML = '';
     $productsDisplay.append(createProductElements(state.products));
     $prevPage.disabled = state.page === 0;
